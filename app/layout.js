@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Aozora",
+  title: "PayGate",
   description: "Fund Collector",
 };
 
@@ -26,7 +26,6 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full w-full flex flex-col">
-
         <AuthWrapper>
           <Navbar />
           <main className="flex-1">
