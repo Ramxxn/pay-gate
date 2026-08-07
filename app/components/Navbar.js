@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Home, User, Briefcase, Mail } from "lucide-react";
+import { User, } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
@@ -15,7 +15,7 @@ const Navbar = () => {
     <nav className="w-full h-16 flex items-center justify-between py-6 px-8 
     bg-white/70 backdrop-blur-md border-b border-gray-200 shadow-sm">
 
-      <div className="text-xl font-semibold tracking-wide text-blue-900">
+      <div className="text-xl font-bold tracking-wide text-blue-900">
         <Link href={"/"}>
           PayGate
         </Link>
@@ -27,26 +27,27 @@ const Navbar = () => {
           <>
             <div className="relative">
               <button
+                onBlur={() => setTimeout(() => {
+                  setOpen(false)
+                }, 300)}
                 onClick={() => setOpen((prev) => !prev)}
                 className="p-2 rounded-full border text-gray-400 hover:bg-gray-100 transition"
               >
-                <User size={22} />
+                {session.user?.avatar ? <div>{session.user?.avatar}</div> : <User size={22} /> }
               </button>
 
               {open && (
                 <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-md p-2">
-                  <button className="w-full px-3 py-2 text-left font-medium my-0.5 text-sm rounded-md text-gray-400 bg-gray-100 hover:bg-gray-300 transition">
+                  <button className="w-full px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
                     Home
                   </button>
-
-
-                  <button className="w-full px-3 py-2 text-left font-medium my-0.5 text-sm rounded-md text-gray-400 bg-gray-100 hover:bg-gray-300 transition">
+                  <button className="w-full px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
                     Mail
                   </button>
 
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full px-3 py-2 text-left font-medium my-0.5 text-sm rounded-md text-gray-400 bg-gray-100 hover:bg-red-300 transition"
+                    className="w-full px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-red-100 transition"
                   >
                     Sign out
                   </button>
