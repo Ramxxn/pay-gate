@@ -38,12 +38,21 @@ const Navbar = () => {
 
               {open && (
                 <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-md p-2">
-                  <button className="w-full px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                  <Link href={'/'} className="w-full block px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
                     Home
-                  </button>
-                  <button className="w-full px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                  </Link>
+
+                  <Link href={'/dashboard'} className="w-full block px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                    Dashboard
+                  </Link>
+
+                  <Link href={`/${session.user?.name}`} className="w-full block px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                    Your Gate
+                  </Link>
+
+                  <Link href={'/mail'} className="w-full block px-2 py-1 text-left font-medium my-0.5 text-sm rounded text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
                     Mail
-                  </button>
+                  </Link>
 
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}

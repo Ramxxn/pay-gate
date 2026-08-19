@@ -1,59 +1,95 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
-
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const UserSchema = new Schema({
+const UserSchema = new Schema(
+  {
     userName: {
-        type: String,
-        required: true,
-        unique: true,
-        minlength: 4,
-        maxlength: 50,
-        trim: true,
+      type: String,
+      required: true,
+      unique: true,
+      minlength: 4,
+      maxlength: 50,
+      trim: true,
     },
+
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        match: [emailRegex, "Please enter a valid email address"],
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      match: [emailRegex, "Please enter a valid email address"],
     },
+
     password: {
-        type: String,
-        required: true,
-        select: false,
-        minlength: 4,
-        maxlength: 95,
+      type: String,
+      required: true,
+      select: false,
+      minlength: 4,
+      maxlength: 95,
     },
+
+    // Profile photo
     avatar: {
+      url: {
         type: String,
         default: null,
-    },
-    lastLogin: {
-        type: Date,
+      },
+      publicId: {
+        type: String,
         default: null,
+      },
     },
+
+    // Cover photo
+    coverImage: {
+      url: {
+        type: String,
+        default: null,
+      },
+      publicId: {
+        type: String,
+        default: null,
+      },
+    },
+
+    // Razorpay credentials
+    razorpay: {
+      keyId: {
+        type: String,
+        default: null,
+      },
+      secret: {
+        type: String,
+        default: null,
+      },
+    },
+
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
+
     isActive: {
-        type: Boolean,
-        default: true,
+      type: Boolean,
+      default: true,
     },
-},
-    {
-        timestamps: true,
-    }
+  },
+  {
+    timestamps: true,
+  }
 );
 
-
 UserSchema.pre("save", async function () {
-    if (!this.isModified("password")) return;
+  if (!this.isModified("password")) return;
 
-    this.password = await bcrypt.hash(this.password, 10);
-})
+  this.password = await bcrypt.hash(this.password, 10);
+});
 
 UserSchema.methods.comparePassword = async function (password) {
-    return bcrypt.compare(password, this.password)
-}
+  return bcrypt.compare(password, this.password);
+};
 
-export default mongoose.models.User || mongoose.model("User", UserSchema)
+export default mongoose.models.User ||
+  mongoose.model("User", UserSchema);
