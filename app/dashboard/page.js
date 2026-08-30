@@ -9,6 +9,7 @@ import {
     X,
     Loader2,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Page = () => {
     const [loading, setLoading] = useState(true);
@@ -123,7 +124,7 @@ const Page = () => {
         try {
             await uploadImage(file, "avatar");
         } catch (error) {
-            alert("Profile photo upload failed.");
+            toast.error("Profile photo upload failed.");
         }
     };
 
@@ -143,7 +144,7 @@ const Page = () => {
         try {
             await uploadImage(file, "cover");
         } catch (error) {
-            alert("Cover photo upload failed.");
+            toast.error("Cover photo upload failed.");
         }
     };
 
@@ -177,7 +178,7 @@ const Page = () => {
                 );
             }
 
-            alert("Dashboard updated successfully.");
+            toast.success("Dashboard updated successfully.");
 
             // Don't keep secret in frontend state
             setFormData((prev) => ({
@@ -187,7 +188,7 @@ const Page = () => {
         } catch (error) {
             console.error("Dashboard update error:", error);
 
-            alert(
+            toast.error(
                 error.message || "Something went wrong while saving."
             );
         } finally {

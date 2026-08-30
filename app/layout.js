@@ -3,16 +3,8 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AuthWrapper from "./components/AuthWrapper";
+import Script from "next/script";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: "PayGate",
@@ -22,8 +14,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    lang="en"
+    className={`h-full antialiased`}
     >
       <body className="min-h-full w-full flex flex-col">
         <AuthWrapper>
@@ -33,6 +25,8 @@ export default function RootLayout({ children }) {
           </main>
           <Footer />
         </AuthWrapper>
+
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
 
       </body>
     </html>

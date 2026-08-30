@@ -58,7 +58,7 @@ export async function GET() {
 
 
 // UPDATE dashboard data
-export async function PATCH(request) {
+export async function PATCH(req) {
     try {
         await connectDB();
 
@@ -74,7 +74,7 @@ export async function PATCH(request) {
             );
         }
 
-        const body = await request.json();
+        const body = await req.json();
 
         const {
             userName,

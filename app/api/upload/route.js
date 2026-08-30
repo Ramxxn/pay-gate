@@ -4,11 +4,11 @@ import cloudinary from "@/lib/cloudinary";
 import User from "@/models/User";
 import connectDB from "@/lib/db";
 
-export async function POST(request) {
+export async function POST(req) {
   try {
     await connectDB();
 
-    const formData = await request.formData();
+    const formData = await req.formData();
 
     const file = formData.get("file");
     const type = formData.get("type");

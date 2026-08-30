@@ -87,10 +87,10 @@ const Navbar = () => {
                   </DropdownLink>
 
                   <DropdownLink
-                    href="/your-gate"
+                    href={`/@${session?.user?.userName}`}
                     onClick={() => setOpen(false)}
                   >
-                    Your Gate
+                    Pay Gate
                   </DropdownLink>
 
                   <DropdownLink
@@ -100,14 +100,6 @@ const Navbar = () => {
                     Dashboard
                   </DropdownLink>
 
-                  {session.user?.name && (
-                    <DropdownLink
-                      href={`/${session.user.name}`}
-                      onClick={() => setOpen(false)}
-                    >
-                      Your Gate
-                    </DropdownLink>
-                  )}
 
                   <DropdownLink
                     href="/mail"
