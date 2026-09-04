@@ -40,8 +40,9 @@ const Navbar = () => {
         {/* Logo */}
         <Link
           href="/"
-          className="text-xl font-bold tracking-tight text-purple-700"
+          className="text-xl font-semibold flex gap-2 items-center text-purple-600"
         >
+         <Image alt="logo" width={35} height={20} src={"/logo.png"} />
           PayGate
         </Link>
 
@@ -70,7 +71,6 @@ const Navbar = () => {
                     <User size={22} />
                   </span>
                 )}
-
                 
               </button>
 
