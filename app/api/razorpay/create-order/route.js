@@ -12,7 +12,7 @@ import User from "@/models/User";
 
 export async function POST(req) {
     try {
-        const { amount, message, recipientId } = await req.json();
+        const { amount, message, donorName, recipientId } = await req.json();
 
         if (!amount || Number(amount) < 1) {
             return NextResponse.json(
@@ -65,6 +65,7 @@ export async function POST(req) {
 
         const payment = await Payment.create({
             recipient: user._id,
+            donorName: donorName?.trim() || "Anonymous",
             message: message || "",
             amount: order.amount,
             currency: order.currency,

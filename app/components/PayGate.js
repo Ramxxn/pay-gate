@@ -2,14 +2,16 @@
 
 import api from "@/lib/api";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const Page = ({user}) => {
+const Page = ({ user }) => {
 
-  const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [donorName, setDonorName] = useState("");
+  const [supporters, setSupporters] = useState([]);
 
 
   const handlePayment = async () => {
@@ -26,6 +28,7 @@ const Page = ({user}) => {
         body: {
           amount: Number(amount),
           message,
+          donorName,
           recipientId: user._id,
         },
       });
@@ -39,7 +42,7 @@ const Page = ({user}) => {
         order_id: order.orderId,
 
         handler: (response) => {
-          console.log("Payment successful:", response);
+          toast.success("Payment successful! Thankyou for you're Support");
         },
 
         prefill: {
@@ -64,30 +67,24 @@ const Page = ({user}) => {
   };
 
 
+  const getDonorInfo = async () => {
+    try {
+      const data = await api(`/api/payments/${user._id}`, {
+        method: "GET",
+      });
 
-  // Dummy supporters
-  const supporters = [
-    {
-      name: "Rahul",
-      amount: 50,
-      message: "Keep doing awesome work ❤️",
-    },
-    {
-      name: "Ankit",
-      amount: 100,
-      message: "Love your content 🔥",
-    },
-    {
-      name: "Priya",
-      amount: 20,
-      message: "Have a chai ☕",
-    },
-    {
-      name: "Rohit",
-      amount: 200,
-      message: "Best wishes for your journey.",
-    },
-  ];
+      setSupporters(data.payments || []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load supporters");
+    }
+  };
+
+
+  useEffect(() => {
+    getDonorInfo();
+  }, [user?._id]);
+
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -124,138 +121,152 @@ const Page = ({user}) => {
       {/* Main */}
       <div className="mx-auto mt-14 max-w-7xl px-6 pb-16">
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid items-stretch gap-8 lg:grid-cols-3">
 
           {/* Left */}
 
-          <div className="lg:col-span-2">
-
-            <div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-7">
+          <div className="lg:col-span-2 h-full">
+            <div className="h-full rounded-3xl border border-zinc-800 bg-zinc-900 p-7">
 
               <h2 className="mb-6 text-2xl font-semibold">
                 Recent Supporters
               </h2>
 
-              <div className="space-y-5">
+              {/* Scrollable supporters */}
+              <div className="max-h-88 overflow-y-auto pr-8 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
 
-                {supporters.map((supporter, index) => (
+                {supporters.map((supporter) => {
+                  const name = supporter.donorName || "Anonymous";
+                  const initial = name.charAt(0).toUpperCase();
 
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 rounded-2xl bg-zinc-800/60 py-2 px-4"
-                  >
-
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-600 font-bold">
-                      {supporter.name.charAt(0)}
-                    </div>
-
-                    <div className="flex-1">
-
-                      <div className="flex justify-between">
-
-                        <h3 className="font-semibold">
-                          {supporter.name}
-                        </h3>
-
-                        <span className="font-bold text-purple-400">
-                          ₹{supporter.amount}
-                        </span>
-
+                  return (
+                    <div
+                      key={supporter._id}
+                      className="flex items-center gap-3 border-b border-zinc-800 py-3 last:border-0"
+                    >
+                      {/* Avatar */}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-600 text-sm font-semibold">
+                        {initial}
                       </div>
 
-                      <p className="mt-2 text-sm text-zinc-400">
-                        {supporter.message}
-                      </p>
+                      {/* Name + Message */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium text-white">
+                            {name}
+                          </h3>
 
+                          <span className="text-xs text-zinc-500">
+                            supported {user?.userName}
+                          </span>
+                        </div>
+
+                        {supporter.message && (
+                          <p className="mt-0.5 truncate text-sm text-zinc-400">
+                            {supporter.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Amount */}
+                      <span className="shrink-0 text-sm font-semibold text-purple-400">
+                        ₹{supporter.amount / 100}
+                      </span>
                     </div>
-
-                  </div>
-
-                ))}
+                  );
+                })}
 
               </div>
 
             </div>
-
           </div>
 
           {/* Right */}
 
           <div>
+            <div className="sticky top-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
 
-            <div className="sticky top-6 rounded-3xl border border-zinc-800 bg-zinc-900 px-4 py-2">
+              {/* Header */}
+              <div className="mb-5">
+                <h2 className="text-xl font-semibold text-white">
+                  Support {user?.userName}
+                </h2>
 
-              <h2 className="text-2xl font-semibold">
-                Support {user?.userName}
-              </h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                  Leave a tip and a message.
+                </p>
+              </div>
 
-              <p className="mt-2 text-sm text-zinc-400">
-                Help me continue creating amazing things.
-              </p>
-
+              {/* Donor name */}
               <input
-                type="number"
-                placeholder="Enter Amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="mt-6 w-full rounded-xl border border-zinc-700 bg-zinc-950 text-sm px-4 py-3 outline-none focus:border-purple-500"
+                type="text"
+                placeholder="Your name (optional)"
+                value={donorName}
+                onChange={(e) => setDonorName(e.target.value)}
+                maxLength={100}
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-purple-500"
               />
 
+              {/* Amount */}
+              <input
+                type="number"
+                placeholder="Enter amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                min="1"
+                className="mt-2.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-purple-500"
+              />
+
+              {/* Message */}
               <textarea
-                placeholder="Leave a message (optional)"
+                placeholder="Say something nice... (optional)"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 maxLength={500}
-                rows={4}
-                className="mt-3 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition focus:border-purple-500"
+                rows={3}
+                className="mt-2.5 w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-purple-500"
               />
 
-              <div className="mt-5 grid grid-cols-2 gap-3">
-
-                <button onClick={() => setAmount(10)} className="rounded-full border border-purple-600 py-2.5 font-sm hover:bg-purple-700">
-                  ₹10
-                </button>
-
-                <button onClick={() => setAmount(20)} className="rounded-full border border-purple-600 py-2.5 font-sm hover:bg-purple-700">
-                  ₹20
-                </button>
-
-                <button onClick={() => setAmount(50)} className="rounded-full border border-purple-600 py-2.5 font-sm hover:bg-purple-700">
-                  ₹50
-                </button>
-
-                <button onClick={() => setAmount(100)} className="rounded-full border border-purple-600 py-2.5 font-sm hover:bg-purple-700">
-                  ₹100
-                </button>
-
+              {/* Quick amounts */}
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {[10, 20, 50, 100].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setAmount(value)}
+                    className="rounded-lg border border-zinc-800 py-2 text-sm font-medium text-zinc-300 transition hover:border-purple-500 hover:text-white"
+                  >
+                    ₹{value}
+                  </button>
+                ))}
               </div>
 
-              <button onClick={handlePayment} disabled={loading} className="mt-6 w-full rounded-xl border border-purple-100 bg-purple-500 py-3 text-lg font-semibold transition hover:scale-95">
-                {loading ? "Processing..." : `Pay ₹${amount || ""}`}
+              {/* Pay */}
+              <button
+                onClick={handlePayment}
+                disabled={loading}
+                className="mt-4 w-full rounded-xl bg-purple-600 py-3 text-sm font-semibold text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {loading
+                  ? "Processing..."
+                  : `Pay ${amount ? `₹${amount}` : "now"}`}
               </button>
 
-              <div className="mt-8 border-t border-zinc-800 pt-6 text-center">
+              {/* Razorpay */}
+              <div className="mt-4 flex items-center justify-center gap-2 border-t border-zinc-800 bg-white rounded-full p-2">
+                <Image
+                  src="/images/razorpay-icon.png"
+                  width={24}
+                  height={24}
+                  alt="Razorpay"
+                />
 
-                <div className="inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3.5 mb-2 py-2">
-
-                  <Image
-                    src="/images/razorpay-icon.png"
-                    width={28}
-                    height={28}
-                    alt="razorpay"
-                    className="bg-none"
-                  />
-
-                  <span className="text-sm text-zinc-900">
-                    Powered by Razorpay
-                  </span>
-
-                </div>
-
+                <span className="text-xs text-zinc-500">
+                  Secure payment with Razorpay
+                </span>
               </div>
 
             </div>
-
           </div>
 
         </div>
