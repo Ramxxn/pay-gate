@@ -5,10 +5,10 @@ import connectDB from "@/lib/db";
 import User from "@/models/User";
 
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// const razorpay = new Razorpay({
+//     key_id: process.env.RAZORPAY_KEY_ID,
+//     key_secret: process.env.RAZORPAY_KEY_SECRET,
+// });
 
 export async function POST(req) {
     try {
@@ -39,6 +39,24 @@ export async function POST(req) {
             );
         }
 
+        // Get Razorpay credentials from user document
+        const keyId = user.razorpay?.keyId;
+        const secret = user.razorpay?.secret;
+
+        if (!keyId || !secret) {
+            return NextResponse.json(
+                { error: "Razorpay credentials are not configured for this user" },
+                { status: 400 }
+            );
+        }
+
+
+        // Create Razorpay instance dynamically
+        const razorpay = new Razorpay({
+            key_id: keyId,
+            key_secret: secret,
+        });
+
         const order = await razorpay.orders.create({
             amount: Number(amount) * 100,
             currency: "INR",
@@ -59,6 +77,7 @@ export async function POST(req) {
             amount: order.amount,
             currency: order.currency,
             paymentId: payment._id,
+            keyId: keyId,
         });
 
     } catch (error) {
