@@ -1,13 +1,14 @@
 export default function Home() {
   return (
     <main className="min-h-screen w-full bg-white text-gray-900">
-
       <section className="relative overflow-hidden">
+        {/* Background decorations */}
         <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-purple-200/40 blur-3xl" />
         <div className="absolute -right-32 top-40 h-96 w-96 rounded-full bg-purple-100/60 blur-3xl" />
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 lg:grid-cols-2 lg:px-8 lg:py-28">
-
+          
+          {/* Left Content */}
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-purple-50 px-4 py-2 text-sm font-medium text-purple-700">
               Support the people you love (don't)
@@ -51,10 +52,39 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Right Hero Image Grid */}
+          <div className="grid h-125 grid-cols-2 grid-rows-5 gap-3">
+            
+           
+            <div className="row-span-5 overflow-hidden rounded-3xl">
+              <img
+                src="/images/ui/secure-paygate-1.jpg"
+                alt="Creator"
+                className="h-full w-full object-cover transition duration-500 hover:scale-105"
+              />
+            </div>
+
+            
+            <div className="row-span-2 overflow-hidden rounded-3xl">
+              <img
+                src="/images/ui/secure-paygate-2.jpg"
+                alt="Creator"
+                className="h-full w-full object-cover transition duration-500 hover:scale-105"
+              />
+            </div>
+
+            
+            <div className="row-span-3 overflow-hidden rounded-3xl">
+              <img
+                src="/images/ui/secure-paygate-3.jpg"
+                alt="Creator"
+                className="h-full w-full object-cover transition duration-500 hover:scale-105"
+              />
+            </div>
+
+          </div>
         </div>
       </section>
-
-
     </main>
   );
 }
