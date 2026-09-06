@@ -59,7 +59,7 @@ export async function POST(req) {
       cloudinary.uploader
         .upload_stream(
           {
-            folder: `chai-users/${userId}`,
+            folder: `paygate-users/${userId}`,
             resource_type: "image",
           },
           (error, result) => {

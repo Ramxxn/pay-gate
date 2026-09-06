@@ -6,13 +6,11 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Page = ({ user }) => {
-
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [donorName, setDonorName] = useState("");
   const [supporters, setSupporters] = useState([]);
-
 
   const handlePayment = async () => {
     if (!amount || Number(amount) <= 0) {
@@ -38,34 +36,66 @@ const Page = ({ user }) => {
         amount: order.amount,
         currency: order.currency,
         name: user?.userName,
-        description: "Support / My Gate Amount",
+        description: `Support ${user?.userName}`,
         order_id: order.orderId,
 
         handler: (response) => {
-          toast.success("Payment successful! Thankyou for you're Support");
+          console.log("Payment successful:", response);
+
+          toast.success(
+            `Thank you for supporting @${user?.userName}!`,
+            {
+              duration: 4000,
+            }
+          );
+
+          setAmount("");
+          setMessage("");
+          setDonorName("");
+
+          // Refresh supporters after successful payment
+          getDonorInfo();
         },
 
         prefill: {
-          name: "",
+          name: donorName || "",
           email: "",
         },
 
         theme: {
-          color: "#a855f7",
+          color: "#7c3aed",
+        },
+
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+          },
         },
       };
 
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
+      if (!window.Razorpay) {
+        toast.error("Payment system is not available");
+        return;
+      }
 
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.on("payment.failed", (response) => {
+        console.error("Payment failed:", response.error);
+
+        toast.error(
+          response.error?.description || "Payment failed. Please try again."
+        );
+      });
+
+      razorpay.open();
     } catch (error) {
       console.error(error);
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
-
 
   const getDonorInfo = async () => {
     try {
@@ -80,40 +110,41 @@ const Page = ({ user }) => {
     }
   };
 
-
   useEffect(() => {
     getDonorInfo();
   }, [user?._id]);
 
-
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen bg-[#f7f7f8] text-neutral-900">
 
       {/* Cover */}
-      <div className="relative h-72 w-full">
+      <div className="relative h-72 w-full overflow-hidden">
         <Image
           src="/images/coverwing.jpg"
           alt="cover"
           fill
+          priority
           className="object-cover"
         />
 
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/25" />
       </div>
 
       {/* Profile */}
-      <div className="relative flex flex-col items-center -mt-20">
+      <div className="relative -mt-20 flex flex-col items-center">
 
-        <Image
-          src={user?.avatar?.url || "/images/avatarwing.com"}
-          width={160}
-          height={160}
-          alt="profile"
-          className="rounded-full border-8 border-zinc-100 object-cover"
-        />
+        <div className="relative h-40 w-40 overflow-hidden rounded-full border-8 border-white bg-neutral-100 shadow-md">
+          <Image
+            src={user?.avatar?.url || "/images/avatarwing.com"}
+            fill
+            sizes="160px"
+            alt={`${user?.userName || "Creator"} profile`}
+            className="object-cover"
+          />
+        </div>
 
-        <h1 className="mt-4 text-3xl font-bold">
-          {user?.userName}
+        <h1 className="mt-4 text-3xl font-bold tracking-tight text-neutral-950">
+          @{user?.userName}
         </h1>
 
       </div>
@@ -124,57 +155,76 @@ const Page = ({ user }) => {
         <div className="grid items-stretch gap-8 lg:grid-cols-3">
 
           {/* Left */}
+          <div className="h-full lg:col-span-2">
+            <div className="h-full rounded-3xl border border-neutral-200 bg-white p-7 shadow-sm">
 
-          <div className="lg:col-span-2 h-full">
-            <div className="h-full rounded-3xl border border-zinc-800 bg-zinc-900 p-7">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                  Recent Supporters
+                </h2>
 
-              <h2 className="mb-6 text-2xl font-semibold">
-                Recent Supporters
-              </h2>
+                <p className="mt-1 text-sm text-neutral-500">
+                  People who have supported this creator.
+                </p>
+              </div>
 
               {/* Scrollable supporters */}
-              <div className="max-h-88 overflow-y-auto pr-8 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+              <div className="max-h-88 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-neutral-300 scrollbar-track-transparent">
 
-                {supporters.map((supporter) => {
-                  const name = supporter.donorName || "Anonymous";
-                  const initial = name.charAt(0).toUpperCase();
+                {supporters.length === 0 ? (
+                  <div className="flex min-h-40 items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50">
+                    <div className="text-center">
+                      <p className="text-sm font-medium text-neutral-700">
+                        No supporters yet
+                      </p>
 
-                  return (
-                    <div
-                      key={supporter._id}
-                      className="flex items-center gap-3 border-b border-zinc-800 py-3 last:border-0"
-                    >
-                      {/* Avatar */}
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-600 text-sm font-semibold">
-                        {initial}
-                      </div>
+                      <p className="mt-1 text-xs text-neutral-500">
+                        Be the first person to support @{user?.userName}.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  supporters.map((supporter) => {
+                    const name = supporter.donorName || "Anonymous";
+                    const initial = name.charAt(0).toUpperCase();
 
-                      {/* Name + Message */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-medium text-white">
-                            {name}
-                          </h3>
-
-                          <span className="text-xs text-zinc-500">
-                            supported {user?.userName}
-                          </span>
+                    return (
+                      <div
+                        key={supporter._id}
+                        className="flex items-center gap-3 border-b border-neutral-100 py-3 last:border-0"
+                      >
+                        {/* Avatar */}
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-sm font-semibold text-neutral-600 ring-1 ring-neutral-200">
+                          {initial}
                         </div>
 
-                        {supporter.message && (
-                          <p className="mt-0.5 truncate text-sm text-zinc-400">
-                            {supporter.message}
-                          </p>
-                        )}
-                      </div>
+                        {/* Name + Message */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-medium text-neutral-900">
+                              {name}
+                            </h3>
 
-                      {/* Amount */}
-                      <span className="shrink-0 text-sm font-semibold text-purple-400">
-                        ₹{supporter.amount / 100}
-                      </span>
-                    </div>
-                  );
-                })}
+                            <span className="truncate text-xs text-neutral-400">
+                              supported @{user?.userName}
+                            </span>
+                          </div>
+
+                          {supporter.message && (
+                            <p className="mt-0.5 truncate text-sm text-neutral-500">
+                              {supporter.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Amount */}
+                        <span className="shrink-0 text-sm font-semibold text-neutral-800">
+                          ₹{supporter.amount / 100}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
 
               </div>
 
@@ -182,17 +232,16 @@ const Page = ({ user }) => {
           </div>
 
           {/* Right */}
-
           <div>
-            <div className="sticky top-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+            <div className="sticky top-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
 
               {/* Header */}
-              <div className="mb-5">
-                <h2 className="text-xl font-semibold text-white">
-                  Support {user?.userName}
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold tracking-tight text-neutral-900">
+                  Support @{user?.userName}
                 </h2>
 
-                <p className="mt-1 text-sm text-zinc-500">
+                <p className="mt-1 text-sm text-neutral-500">
                   Leave a tip and a message.
                 </p>
               </div>
@@ -204,7 +253,7 @@ const Page = ({ user }) => {
                 value={donorName}
                 onChange={(e) => setDonorName(e.target.value)}
                 maxLength={100}
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-purple-500"
+                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
               />
 
               {/* Amount */}
@@ -214,7 +263,7 @@ const Page = ({ user }) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min="1"
-                className="mt-2.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-purple-500"
+                className="mt-2.5 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
               />
 
               {/* Message */}
@@ -224,7 +273,7 @@ const Page = ({ user }) => {
                 onChange={(e) => setMessage(e.target.value)}
                 maxLength={500}
                 rows={3}
-                className="mt-2.5 w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-purple-500"
+                className="mt-2.5 w-full resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
               />
 
               {/* Quick amounts */}
@@ -234,7 +283,11 @@ const Page = ({ user }) => {
                     key={value}
                     type="button"
                     onClick={() => setAmount(value)}
-                    className="rounded-lg border border-zinc-800 py-2 text-sm font-medium text-zinc-300 transition hover:border-purple-500 hover:text-white"
+                    className={`rounded-lg border py-2 text-sm font-medium transition ${
+                      Number(amount) === value
+                        ? "border-purple-300 bg-purple-50 text-purple-700"
+                        : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50"
+                    }`}
                   >
                     ₹{value}
                   </button>
@@ -245,7 +298,7 @@ const Page = ({ user }) => {
               <button
                 onClick={handlePayment}
                 disabled={loading}
-                className="mt-4 w-full rounded-xl bg-purple-600 py-3 text-sm font-semibold text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-4 w-full rounded-xl bg-neutral-900 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading
                   ? "Processing..."
@@ -253,7 +306,7 @@ const Page = ({ user }) => {
               </button>
 
               {/* Razorpay */}
-              <div className="mt-4 flex items-center justify-center gap-2 border-t border-zinc-800 bg-white rounded-full p-2">
+              <div className="mt-5 flex items-center justify-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-2.5">
                 <Image
                   src="/images/razorpay-icon.png"
                   width={24}
@@ -261,7 +314,7 @@ const Page = ({ user }) => {
                   alt="Razorpay"
                 />
 
-                <span className="text-xs text-zinc-500">
+                <span className="text-xs font-medium text-neutral-500">
                   Secure payment with Razorpay
                 </span>
               </div>

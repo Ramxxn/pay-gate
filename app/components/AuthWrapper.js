@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast"
 export default function AuthWrapper({ children }) {
     return (
         <SessionProvider>
-            <Toaster position="top right" />
+            <Toaster position="bottom left" />
             {children}
         </SessionProvider>
     )
