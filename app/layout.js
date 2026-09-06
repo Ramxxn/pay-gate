@@ -7,8 +7,8 @@ import Script from "next/script";
 
 
 export const metadata = {
-  title: "PayGate",
-  description: "Fund Collector",
+  title: "Paygate",
+  description: "Fund Supporter",
 };
 
 export default function RootLayout({ children }) {

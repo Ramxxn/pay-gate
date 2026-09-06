@@ -1,87 +1,113 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full bg-[#f7f7f8] text-neutral-900">
+    <main className="min-h-screen w-full bg-[#fafafa] text-neutral-900">
       <section className="relative overflow-hidden">
-        {/* Subtle background accents — no gradients */}
-        <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-purple-100/50 blur-3xl" />
-        <div className="pointer-events-none absolute -right-32 top-40 h-80 w-80 rounded-full bg-purple-50/70 blur-3xl" />
+        <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-16 sm:py-20 lg:grid-cols-2 lg:px-8 lg:py-24">
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 py-12 lg:grid-cols-2 lg:px-8 lg:py-20">
-          
           {/* Left Content */}
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-100 bg-white px-4 py-2 text-sm font-medium text-purple-700 shadow-sm">
-              Support the people you love
+          <div className="max-w-xl">
+
+            {/* Small eyebrow */}
+            <div className="mb-7 flex items-center gap-3 text-sm font-medium text-neutral-500">
+              <span className="h-px w-8 bg-neutral-300" />
+              A place for creators
             </div>
 
-            <h1 className="max-w-2xl text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-6xl">
-              A little support can
-              <span className="text-purple-600"> go a long way.</span>
+            {/* Heading */}
+            <h1 className="max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-0.045em] text-neutral-950 sm:text-6xl lg:text-[4.25rem]">
+              A little support
+              <br />
+              can{" "}
+              <span className="text-neutral-400">
+                go a long way.
+              </span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-lg leading-8 text-neutral-600">
-              Create your own page, share what you do, and let your community
-              support you with a simple contribution.
+            {/* Description */}
+            <p className="mt-7 max-w-lg text-base leading-7 text-neutral-500 sm:text-lg sm:leading-8">
+              Create your own page, share what you do, and let your
+              community support you with a simple contribution.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            {/* Actions */}
+            <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+
               <Link
                 href="/sign-up"
-                className="rounded-xl bg-purple-600 px-6 py-3.5 text-center text-sm font-semibold text-white shadow-sm transition duration-200 hover:bg-purple-700 hover:shadow-md"
+                className="group inline-flex items-center gap-2 rounded-md bg-purple-900 px-5 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-neutral-800 hover:shadow-lg"
               >
                 Create your page
               </Link>
 
               <Link
                 href="/creator"
-                className="rounded-xl border border-neutral-200 bg-white px-6 py-3.5 text-center text-sm font-semibold text-neutral-700 shadow-sm transition duration-200 hover:border-neutral-300 hover:bg-neutral-50"
+                className="group inline-flex items-center gap-2 px-2 py-3 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-950"
               >
                 Explore creators
               </Link>
+
             </div>
 
-            <div className="mt-8 flex items-center gap-3 text-sm text-neutral-500">
+            {/* Social proof */}
+            <div className="mt-10 flex items-center gap-4">
+
               <div className="flex -space-x-2">
-                <div className="h-8 w-8 rounded-full border-2 border-white bg-purple-100" />
-                <div className="h-8 w-8 rounded-full border-2 border-white bg-purple-200" />
-                <div className="h-8 w-8 rounded-full border-2 border-white bg-purple-300" />
-                <div className="h-8 w-8 rounded-full border-2 border-white bg-purple-400" />
+                <div className="h-8 w-8 rounded-full border-2 border-[#fafafa] bg-neutral-200" />
+                <div className="h-8 w-8 rounded-full border-2 border-[#fafafa] bg-neutral-300" />
+                <div className="h-8 w-8 rounded-full border-2 border-[#fafafa] bg-neutral-400" />
+                <div className="h-8 w-8 rounded-full border-2 border-[#fafafa] bg-neutral-500" />
               </div>
 
-              <span>Join creators building something they love.</span>
+              <div className="h-4 w-px bg-neutral-200" />
+
+              <p className="text-sm text-neutral-500">
+                Built for people who create
+                <span className="ml-1 text-neutral-900">with purpose.</span>
+              </p>
+
             </div>
           </div>
 
-          {/* Right Hero Image Grid */}
+          {/* Right Hero Image Grid — unchanged */}
           <div className="grid h-125 grid-cols-2 grid-rows-5 gap-3">
-            
+
             <div className="row-span-5 overflow-hidden rounded-3xl bg-neutral-100">
-              <img
+              <Image
                 src="/images/ui/secure-paygate-1.jpg"
                 alt="Creator"
-                className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                width={600}
+                height={1000}
+                priority
+                className="h-full w-full object-cover transition duration-700 hover:scale-105"
               />
             </div>
 
             <div className="row-span-2 overflow-hidden rounded-3xl bg-neutral-100">
-              <img
+              <Image
                 src="/images/ui/secure-paygate-2.jpg"
                 alt="Creator"
-                className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                width={600}
+                height={500}
+                priority
+                className="h-full w-full object-cover transition duration-700 hover:scale-105"
               />
             </div>
 
             <div className="row-span-3 overflow-hidden rounded-3xl bg-neutral-100">
-              <img
+              <Image
                 src="/images/ui/secure-paygate-3.jpg"
                 alt="Creator"
-                className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                width={600}
+                height={700}
+                className="h-full w-full object-cover transition duration-700 hover:scale-105"
               />
             </div>
 
           </div>
+
         </div>
       </section>
     </main>

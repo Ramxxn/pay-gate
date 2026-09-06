@@ -140,16 +140,20 @@ const Navbar = () => {
             <>
               <Link
                 href="/sign-in"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+                className="group relative px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-950"
               >
                 Sign in
+                <span className="absolute bottom-0 left-2 right-2 h-px origin-left scale-x-0 bg-purple-600 transition-transform duration-200 group-hover:scale-x-100" />
               </Link>
 
               <Link
                 href="/sign-up"
-                className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-purple-700"
+                className="group flex items-center gap-1.5 px-2 py-2 text-sm font-semibold text-gray-900 transition-colors hover:text-purple-700"
               >
                 Get Started
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
+                  →
+                </span>
               </Link>
             </>
           )}
