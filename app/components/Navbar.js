@@ -137,10 +137,11 @@ const Navbar = () => {
           ) : (
 
             /* Logged out */
+            /* Logged out */
             <>
               <Link
                 href="/sign-in"
-                className="group relative px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-950"
+                className="group relative px-2 py-2 text-xs font-medium text-gray-600 transition-colors hover:text-gray-950 sm:text-sm"
               >
                 Sign in
                 <span className="absolute bottom-0 left-2 right-2 h-px origin-left scale-x-0 bg-purple-600 transition-transform duration-200 group-hover:scale-x-100" />
@@ -148,7 +149,7 @@ const Navbar = () => {
 
               <Link
                 href="/sign-up"
-                className="group flex items-center gap-1.5 px-2 py-2 text-sm font-semibold text-gray-900 transition-colors hover:text-purple-700"
+                className="group flex items-center gap-1 px-2 py-2 text-xs font-semibold text-gray-900 transition-colors hover:text-purple-700 sm:gap-1.5 sm:text-sm"
               >
                 Get Started
                 <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
