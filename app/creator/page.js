@@ -7,10 +7,9 @@ export default async function CreatorsPage() {
   await connectDB();
 
   const creators = await User.find({})
-    .select("userName name profileImage bio")
+    .select("userName name avatar bio")
     .sort({ createdAt: -1 })
     .lean();
-
   return (
     <main className="min-h-screen bg-[#f7f7f8]">
       {/* Hero Image Section */}
@@ -105,7 +104,7 @@ export default async function CreatorsPage() {
                         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white bg-neutral-100 shadow-sm ring-1 ring-black/[0.08] transition duration-200 group-hover:scale-105 group-hover:ring-purple-300 sm:h-20 sm:w-20">
                           {creator.avatar ? (
                             <Image
-                              src={creator.avatar}
+                              src={creator.avatar.url}
                               alt={displayName}
                               fill
                               sizes="80px"
