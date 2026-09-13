@@ -1,18 +1,26 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import cloudinary from "@/lib/cloudinary";
 
 import User from "@/models/User";
 import connectDB from "@/lib/db";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req) {
   try {
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
+
+    const userId = session.user.id;
+    console.log("userId:", userId)
+
     await connectDB();
 
     const formData = await req.formData();
 
     const file = formData.get("file");
     const type = formData.get("type");
-    const userId = formData.get("userId");
 
     if (!file) {
       return NextResponse.json(
@@ -28,14 +36,7 @@ export async function POST(req) {
       );
     }
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
-      );
-    }
-
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
 
     if (!user) {
       return NextResponse.json(
@@ -114,7 +115,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         success: false,
-        error: "Image upload failed",
+        error: error?.message || "Image upload failed",
       },
       { status: 500 }
     );

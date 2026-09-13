@@ -9,6 +9,7 @@ import {
     X,
     Loader2,
 } from "lucide-react";
+import api from "@/lib/api";
 import toast from "react-hot-toast";
 
 const Page = () => {
@@ -81,32 +82,29 @@ const Page = () => {
     // =========================
     // IMAGE UPLOAD
     // =========================
-    const uploadImage = async (file, type) => {
-        if (!file) return;
+const uploadImage = async (file, type) => {
+    if (!file) return;
 
-        const data = new FormData();
+    const formData = new FormData();
 
-        data.append("file", file);
-        data.append("type", type);
+    formData.append("file", file);
+    formData.append("type", type);
 
-        try {
-            const response = await fetch("/api/cloudinary/upload", {
-                method: "POST",
-                body: data,
-            });
+    try {
+        const result = await api("/api/upload", {
+            method: "POST",
+            body: formData,
+        });
 
-            const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error(`${type} upload error:`, error);
+        throw error;
+    }
+};
 
-            if (!response.ok) {
-                throw new Error(result.error || "Image upload failed");
-            }
+ 
 
-            return result;
-        } catch (error) {
-            console.error(`${type} upload error:`, error);
-            throw error;
-        }
-    };
 
     // =========================
     // PROFILE IMAGE
