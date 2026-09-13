@@ -13,8 +13,6 @@ export async function POST(req) {
     if (!session?.user?.id) { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
 
     const userId = session.user.id;
-    console.log("userId:", userId)
-
     await connectDB();
 
     const formData = await req.formData();
@@ -51,27 +49,14 @@ export async function POST(req) {
         ? user.avatar?.publicId
         : user.coverImage?.publicId;
 
-    // Convert file to buffer
+    // Convert file to base64 data URI and upload
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const base64 = Buffer.from(bytes).toString("base64");
+    const dataUri = `data:${file.type};base64,${base64}`;
 
-    // Upload NEW image
-    const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder: `paygate-users/${userId}`,
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        )
-        .end(buffer);
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: "paygate-users",
+      resource_type: "image",
     });
 
     // Save new image in MongoDB
@@ -121,3 +106,5 @@ export async function POST(req) {
     );
   }
 }
+
+

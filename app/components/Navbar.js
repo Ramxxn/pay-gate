@@ -11,6 +11,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -68,15 +69,15 @@ const Navbar = () => {
                 aria-expanded={open}
                 aria-haspopup="menu"
                 aria-label="Open account menu"
-                className="flex items-center rounded-full border border-gray-200 bg-white p-1 shadow-sm transition hover:bg-gray-50"
+                className="flex items-center rounded-full bg-white shadow-sm transition p-1 hover:bg-gray-50"
               >
-                {session.user?.image ? (
+                {session.user?.avatar?.url ? (
                   <Image
-                    src={session.user.image}
+                    src={session.user?.avatar?.url}
                     alt="Profile"
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full object-cover"
+                    className="h-12 w-12 rounded-full object-cover"
                   />
                 ) : (
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-50 text-purple-700">

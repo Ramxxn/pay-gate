@@ -110,8 +110,8 @@ export async function PATCH(req) {
             user.razorpay.keyId = razorpayKeyId;
         }
 
-        // Update Razorpay Secret
-        if (razorpaySecret !== undefined) {
+        // Update Razorpay Secret (only when a non-empty value is provided)
+        if (razorpaySecret) {
             user.razorpay.secret = razorpaySecret;
         }
 
