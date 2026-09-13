@@ -120,7 +120,7 @@ const Page = ({ user }) => {
       {/* Cover */}
       <div className="relative h-72 w-full overflow-hidden">
         <Image
-          src="/images/coverwing.jpg"
+          src={user?.coverImage?.url || "/images/coverwing.jpg"}
           alt="cover"
           fill
           priority
@@ -283,11 +283,10 @@ const Page = ({ user }) => {
                     key={value}
                     type="button"
                     onClick={() => setAmount(value)}
-                    className={`rounded-lg border py-2 text-sm font-medium transition ${
-                      Number(amount) === value
+                    className={`rounded-lg border py-2 text-sm font-medium transition ${Number(amount) === value
                         ? "border-purple-300 bg-purple-50 text-purple-700"
                         : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50"
-                    }`}
+                      }`}
                   >
                     ₹{value}
                   </button>
